@@ -6,7 +6,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>insertCashBook</h1>
+	<h1>Insert Cash Book</h1>
 	<form action="<%=request.getContextPath()%>/InsertCashBookController" method="post">
 		<table border="1">
 			<tr>
