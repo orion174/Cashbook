@@ -36,8 +36,8 @@ public class CashBookListByMonthController extends HttpServlet {
 			y = y+1;
 		}
 		
-		System.out.println(y+" <-- y");
-		System.out.println(m+" <-- m");
+		System.out.println(y + " <-- y");
+		System.out.println(m + " <-- m");
 		
 		/*
 		 
