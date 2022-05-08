@@ -20,6 +20,7 @@ public class CashBookListByMonthController extends HttpServlet {
 		Calendar now = Calendar.getInstance(); // ex) 2022.04.19
 		int y = now.get(Calendar.YEAR);
 		int m = now.get(Calendar.MONTH) + 1; // 0 - 1월, 1 - 2월, ... 11 - 12월
+		int t = now.get(Calendar.DATE);
 		
 		if(request.getParameter("y") != null) {
 			y = Integer.parseInt(request.getParameter("y"));
@@ -38,6 +39,7 @@ public class CashBookListByMonthController extends HttpServlet {
 		
 		System.out.println(y + " <-- y");
 		System.out.println(m + " <-- m");
+		System.out.println(t + " <-- m");
 		
 		/*
 		 
@@ -87,8 +89,9 @@ public class CashBookListByMonthController extends HttpServlet {
 		request.setAttribute("list", list);
 		request.setAttribute("y", y);
 		request.setAttribute("m", m);
+		request.setAttribute("t", t);
 		// 3) 뷰 포워딩
-		request.getRequestDispatcher("/WEB-INF/view/CashBookListByMonth.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/cashBookListByMonth.jsp").forward(request, response);
 	}
 
 }
