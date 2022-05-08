@@ -1,34 +1,57 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import java.util.*;
-import vo.Cashbook;
 import dao.CashbookDao;
+import vo.Cashbook;
 
 @WebServlet("/InsertCashBookController")
 public class InsertCashBookController extends HttpServlet {
 	// doGet
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// session 값 요청
+		HttpSession session = request.getSession();
+		String sessionMemberId = (String)session.getAttribute("sessionMemberId");
+		// 로그인 check
+		if(sessionMemberId == null) {
+			response.sendRedirect(request.getContextPath() + "/LoginController");
+			return;
+		}
 		// y년, m월, d일
 		String y = request.getParameter("y");
 		String m = request.getParameter("m");
 		String d = request.getParameter("d");
 		String cashDate = y + "-" + m + "-" + d;
+		// 디버깅
+		System.out.println(cashDate + "<-cashDate insertCashBookController"); 
 		
 		request.setAttribute("cashDate", cashDate);
 		request.getRequestDispatcher("/WEB-INF/view/insertCashBookForm.jsp").forward(request, response);
 	}
 
 	// doPost
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 한글 깨짐 방지 인코딩
 		request.setCharacterEncoding("utf-8");
+		// session 값 요청
+		HttpSession session = request.getSession();
+		String sessionMemberId = (String)session.getAttribute("sessionMemberId");
+		// 로그인 check
+		if(sessionMemberId == null) {
+			response.sendRedirect(request.getContextPath() + "/LoginController");
+			return;
+		}
 		// request
 		String cashDate = request.getParameter("cashDate");
 		String kind = request.getParameter("kind");
@@ -47,6 +70,7 @@ public class InsertCashBookController extends HttpServlet {
 		cashbook.setKind(kind);
 		cashbook.setCash(cash);
 		cashbook.setMemo(memo);
+		cashbook.setMemberId(sessionMemberId);
 		
 		// 해시태그 처리 -> String 기본 메서드 사용 ...
 		List<String> hashtag = new ArrayList<>();

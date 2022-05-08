@@ -1,7 +1,6 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +15,7 @@ import vo.Cashbook;
 public class CashbookDao {
 	
 	// request CashBookListByMonthController
+	// 로그인 추가 -> member_id 추가
 	public List<Map<String, Object>> selectCashbookListByMonth(int y, int m) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		// DB 초기화
@@ -53,7 +53,6 @@ public class CashbookDao {
 			e.printStackTrace();
 		} finally {
 			try {
-				// DB 종료
 				rs.close();
 				stmt.close();
 				conn.close();
@@ -64,7 +63,55 @@ public class CashbookDao {
 		return list;
 	}
 	
+	// 태그에 따른 cashbook list select 메서드 ..
+	public List<Map<String,Object>> selectcashBookListbyTag(String tag) {
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		// DB 자원 준비
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		// DButil
+		conn = DButil.getConnection();
+		String sql = "SELECT c.cashbook_no cashbookNo "
+					+ "		,t.tag tag "
+					+ "		,c.cash_date cashDate "
+					+ "		,c.kind kind "
+					+ "		,c.cash cash "
+					+ "		,LEFT(c.memo,5) memo "
+					+ "FROM cashbook c INNER JOIN hashtag t "
+					+ "ON c.cashbook_no = t.cashbook_no "
+					+ "WHERE tag = ? "
+					+ "ORDER BY c.cash_date DESC";
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, tag);
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Map<String,Object> map = new HashMap <String,Object>();
+				map.put("cashBookNo",rs.getInt("cashBookNo"));
+				map.put("tag",rs.getString("tag"));
+				map.put("cashDate",rs.getString("cashDate"));
+				map.put("kind",rs.getString("kind"));
+				map.put("cash",rs.getInt("cash"));
+				map.put("memo",rs.getString("memo"));
+				list.add(map);
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				stmt.close();
+				conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
 	// request InsertCashBookController 
+	// 로그인 기능 -> member_id추가
 	public void insertCashbook(Cashbook cashbook, List<String> hashtag) {
 		// DB 초기화
 		Connection conn = null;
@@ -75,8 +122,8 @@ public class CashbookDao {
 		try {
 			conn.setAutoCommit(false); // 자동커밋을 해제
 			// SQL 쿼리
-			String sql = "INSERT INTO cashbook(cash_date,kind,cash,memo,update_date,create_date)"
-					+ " VALUES(?,?,?,?,NOW(),NOW())";
+			String sql = "INSERT INTO cashbook(cash_date, kind, cash, memo, update_date, create_date, member_id)"
+					+ " VALUES(?,?,?,?,NOW(),NOW(), ?)";
 			
 			// insert + select 방금생성된 행의 키값 ex: select 방금입력한 cashbook_no from cashbook;
 			stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS); 
@@ -84,10 +131,11 @@ public class CashbookDao {
 			stmt.setString(2, cashbook.getKind());
 			stmt.setInt(3, cashbook.getCash());
 			stmt.setString(4, cashbook.getMemo());
+			stmt.setString(5, cashbook.getMemberId());
 			stmt.executeUpdate(); // insert
 			rs = stmt.getGeneratedKeys(); // select 방금입력한 cashbook_no from cashbook
 			
-			//
+			// cashbookNo를 넣을 변수
 			int cashbookNo = 0;
 			if(rs.next()) {
 				cashbookNo = rs.getInt(1);
