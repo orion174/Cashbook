@@ -12,6 +12,7 @@
 	List<Map<String, Object>> list = (List<Map<String, Object>>)request.getAttribute("list");
 %>
 	<h1>Tag rank</h1>
+	<a href="<%=request.getContextPath()%>/CashBookListByMonthController" type="button">Cashbook List</a>
 		<form method="get" action="<%=request.getContextPath()%>/TagKindController">
 			<div>
 				[Kind rank]

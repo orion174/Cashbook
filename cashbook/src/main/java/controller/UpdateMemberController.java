@@ -29,7 +29,7 @@ public class UpdateMemberController extends HttpServlet {
 	    Member member = new Member();
 	    // dao.selectMemberOne
 	    MemberDao memberDao = new MemberDao();
-	    member  = memberDao.selectMemberOne(sessionMemberId); // memberId로 DB값 호출
+	    member = memberDao.selectMemberOne(sessionMemberId); // memberId로 DB값 호출
 	    request.setAttribute("member", member);
 	    request.getRequestDispatcher("/WEB-INF/view/updateMemberForm.jsp").forward(request, response);
 	}	
@@ -92,18 +92,18 @@ public class UpdateMemberController extends HttpServlet {
 	    // 비밀번호 수정 성공 확인 코드
 	    // 1) row값이 1이면 비밀번호 수정 성공 -> SelectMemberOneController 호출
 	    if (row == 1) {
-	    	System.out.println("수정성공 UpdateMemberController.dopist");
+	    	System.out.println("수정성공 UpdateMemberController.dopost");
 	    	response.sendRedirect(request.getContextPath() + "/SelectMemberOneController");
 	    	return;
 	    }
 	    // 2) row값이 0이면 비밀번호 수정 오류 -> UpdateMemberController 호출
 	    else if(row == 0) {
-	    	System.out.println("수정실패비밀번호오류 UpdateMemberController.dopist");
+	    	System.out.println("수정실패비밀번호오류 UpdateMemberController.dopost");
 	    	response.sendRedirect(request.getContextPath() + "/UpdateMemberController?msg=failrenewpassword");
 	    }
 	    // 3) row값이 -1이면 SQL 오류
 	    else if (row == -1) {
-	    	System.out.println("예외 발생 UpdateMemberController.dopist");
+	    	System.out.println("예외 발생 UpdateMemberController.dopost");
 	    	response.sendRedirect(request.getContextPath() + "/UpdateMemberController?msg=exception");
 	    }
 	}
